@@ -2,18 +2,30 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/Casper-Mars/concise-cli/paper"
 	"os"
 )
 
-var moduleName = flag.String("m", "", "指定模块名称，用于pom文件的artifactId")
-var parentVersion = flag.String("p", "", "指定父工程的版本")
+var moduleName string
+var parentVersion string
 
 func main() {
+	flag.StringVar(&moduleName, "m", "", "指定模块名称，用于pom文件的artifactId")
+	flag.StringVar(&parentVersion, "p", "", "指定父工程的版本")
 	flag.Parse()
-
-	initDir(*moduleName)
-	initFile(*moduleName)
+	if moduleName == "" {
+		fmt.Println("缺少参数[-m]")
+		flag.Usage()
+		os.Exit(0)
+	}
+	if parentVersion == "" {
+		fmt.Println("缺少参数[-p]")
+		flag.Usage()
+		os.Exit(0)
+	}
+	initDir(moduleName)
+	initFile(moduleName)
 }
 
 func initDir(basePath string) {
@@ -48,7 +60,7 @@ func createDir(path []string) error {
 }
 
 func initFile(basePath string) {
-	initPomFile(basePath, basePath, *parentVersion)
+	initPomFile(basePath, basePath, parentVersion)
 	initMakefile(basePath)
 	initGitlabFile(basePath)
 	initGitIgnoreFile(basePath)
