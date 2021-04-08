@@ -11,3 +11,9 @@ test:
 .PHONY: clean
 clean:
 	rm -rf out
+
+.PHONY: build
+build:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64  go build -o concise-cli-linux-amd64 main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64  go build -o concise-cli-windows-amd64 main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64  go build -o concise-cli-darwin-amd64 main.go
