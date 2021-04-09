@@ -1,4 +1,6 @@
 version=0.1.0
+
+# 进行测试
 .PHONY: test
 test:
 	make clean
@@ -8,10 +10,12 @@ test:
 	&& \
 	./cli -m test-cli -p 1.0.1
 
+# 清理测试产生的文件
 .PHONY: clean
 clean:
 	rm -rf out
 
+# 构建可执行程序
 .PHONY: build
 build:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64  go build -o concise-cli-linux-amd64-${version} main.go
