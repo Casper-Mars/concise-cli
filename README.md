@@ -4,7 +4,7 @@ concise项目的脚手架工具
 
 ## 快速入门
 
-* 查看帮组
+* 查看帮助
 
 ```shell
 ~: concise-cli-${os}-{architecture}-${version} -help
