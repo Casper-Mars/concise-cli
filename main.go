@@ -37,6 +37,8 @@ func initDir(basePath string) {
 	path = append(path, basePath+"/src/main/java")
 	path = append(path, basePath+"/src/main/resources")
 	path = append(path, basePath+"/src/test/java")
+	path = append(path, basePath+"/src/test/java/unit")
+	path = append(path, basePath+"/src/test/java/integration")
 	path = append(path, basePath+"/src/test/resources")
 	path = append(path, basePath+"/db/test/migration")
 	path = append(path, basePath+"/hack")
