@@ -9,11 +9,17 @@ import (
 
 var moduleName string
 var parentVersion string
+var version = "0.1.0"
 
 func main() {
 	flag.StringVar(&moduleName, "m", "", "指定模块名称，用于pom文件的artifactId")
 	flag.StringVar(&parentVersion, "p", "", "指定父工程的版本")
+	showVersion := flag.Bool("v", false, "显示版本号")
 	flag.Parse()
+	if showVersion != nil && *showVersion {
+		fmt.Println("concise-cli:" + version)
+		return
+	}
 	if moduleName == "" {
 		fmt.Println("缺少参数[-m]")
 		flag.Usage()
