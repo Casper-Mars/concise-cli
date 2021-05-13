@@ -26,3 +26,13 @@ jobs:
 
       - name: package
         run: make build
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            concise-cli-linux-amd64
+            concise-cli-windows-amd64.exe
+            concise-cli-darwin-amd64
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
