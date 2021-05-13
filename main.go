@@ -66,6 +66,7 @@ func initFile(basePath string) {
 	initMakefile(basePath)
 	initGitlabFile(basePath)
 	initGitIgnoreFile(basePath)
+	initMysqlShell(basePath + "/hack")
 }
 
 func initGitIgnoreFile(basePath string) {
@@ -91,6 +92,13 @@ func initMakefile(basePath string) {
 
 func initPomFile(basePath, moduleName, parentVersion string) {
 	err := paper.CreatePom(basePath, moduleName, parentVersion)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initMysqlShell(basePath string) {
+	err := paper.CreateMysqlShell(basePath)
 	if err != nil {
 		panic(err)
 	}
