@@ -18,6 +18,6 @@ clean:
 # 构建可执行程序
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64  go build -o concise-cli-linux-amd64-${version} main.go
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64  go build -o concise-cli-windows-amd64-${version}.exe main.go
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64  go build -o concise-cli-darwin-amd64-${version} main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64  go build -ldflags "-X main.version=${version}" -o concise-cli-linux-amd64-${version} main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64  go build -ldflags "-X main.version=${version}" -o concise-cli-windows-amd64-${version}.exe main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64  go build -ldflags "-X main.version=${version}" -o concise-cli-darwin-amd64-${version} main.go
