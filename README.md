@@ -4,8 +4,7 @@
 
 - [concise项目的脚手架工具](#concise项目的脚手架工具)
     - [安装](##安装)
-        - [linux](###linux)
-        - [mac](###mac)
+        - [linux/mac](###linux/mac)
         - [windows](###windows)
     - [快速入门](##快速入门)
     - [参与贡献](##参与贡献)
