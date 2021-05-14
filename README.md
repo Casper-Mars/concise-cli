@@ -4,9 +4,9 @@
 
 - [concise项目的脚手架工具](#concise项目的脚手架工具)
     - [安装](##安装)
-      - [linux](###linux)
-      - [mac](###mac)
-      - [windows](###windows)
+        - [linux](###linux)
+        - [mac](###mac)
+        - [windows](###windows)
     - [快速入门](##快速入门)
     - [参与贡献](##参与贡献)
 
@@ -14,9 +14,23 @@
 
 ## 安装
 
-### linux
+### linux/mac
 
-### mac
+* 下载最新的release
+
+* 把下载好的二进制包重命名为 `concise-cli` 并移动到 `/usr/local/bin` 下
+
+```shell
+mv concise-cli /usr/local/bin/
+```
+
+* 查询版本号来验证安装结果
+
+```shell
+concise-cli -v
+```
+
+如果出现命令找不到，则安装失败，可能是环境没刷新。否则就是成功。
 
 ### windows
 
