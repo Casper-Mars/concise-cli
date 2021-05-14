@@ -1,4 +1,4 @@
-version=0.1.7
+version=0.1.8
 
 # 进行测试
 .PHONY: test
