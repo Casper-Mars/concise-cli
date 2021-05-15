@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/Casper-Mars/concise-cli/paper"
+	"github.com/Casper-Mars/concise-cli/pkg/creator"
 	"os"
 )
 
@@ -76,35 +76,35 @@ func initFile(basePath string) {
 }
 
 func initGitIgnoreFile(basePath string) {
-	err := paper.CreateIgnoreFile(basePath)
+	err := creator.CreateIgnoreFile(basePath)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initGitlabFile(basePath string) {
-	err := paper.CreateGitlabCi(basePath)
+	err := creator.CreateGitlabCi(basePath)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initMakefile(basePath string) {
-	err := paper.CreateMakefile(basePath)
+	err := creator.CreateMakefile(basePath)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initPomFile(basePath, moduleName, parentVersion string) {
-	err := paper.CreatePom(basePath, moduleName, parentVersion)
+	err := creator.CreatePom(basePath, moduleName, parentVersion)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initMysqlShell(basePath string) {
-	err := paper.CreateMysqlShell(basePath)
+	err := creator.CreateMysqlShell(basePath)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
-package paper
+package creator
 
 import (
 	"os"

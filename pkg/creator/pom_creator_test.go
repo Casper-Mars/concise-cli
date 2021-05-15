@@ -1,4 +1,4 @@
-package paper
+package creator
 
 import (
 	"github.com/stretchr/testify/require"
