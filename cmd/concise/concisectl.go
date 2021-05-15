@@ -3,21 +3,22 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/Casper-Mars/concise-cli/pkg/creator"
+	"github.com/Casper-Mars/concise-cli/pkg/project"
 	"os"
 )
 
 var moduleName string
 var parentVersion string
-var version = "0.1.0"
+var cliVersion = "0.1.0"
 
 func main() {
 	flag.StringVar(&moduleName, "m", "", "指定模块名称，用于pom文件的artifactId")
 	flag.StringVar(&parentVersion, "p", "", "指定父工程的版本")
 	showVersion := flag.Bool("v", false, "显示版本号")
+	online := flag.Bool("o", false, "是否使用在线的模板")
 	flag.Parse()
 	if showVersion != nil && *showVersion {
-		fmt.Println("concise-cli:" + version)
+		fmt.Println("concise-cli:" + cliVersion)
 		return
 	}
 	if moduleName == "" {
@@ -30,82 +31,11 @@ func main() {
 		flag.Usage()
 		os.Exit(0)
 	}
-	initDir(moduleName)
-	initFile(moduleName)
-}
-
-func initDir(basePath string) {
-	err := os.Mkdir(basePath, os.ModePerm)
-	if err != nil {
-		panic(err.Error())
+	var builder project.Builder
+	if online != nil && *online {
+		builder = project.NewProjectBuilder(project.BuildModeOnline)
+	} else {
+		builder = project.NewProjectBuilder(project.BuildModeOffline)
 	}
-	path := []string{}
-	path = append(path, basePath+"/src/main/java")
-	path = append(path, basePath+"/src/main/resources")
-	path = append(path, basePath+"/src/test/java")
-	path = append(path, basePath+"/src/test/java/unit")
-	path = append(path, basePath+"/src/test/java/integration")
-	path = append(path, basePath+"/src/test/resources")
-	path = append(path, basePath+"/db/test/migration")
-	path = append(path, basePath+"/hack")
-	err = createDir(path)
-	if err != nil {
-		err := os.Remove(basePath)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-}
-
-func createDir(path []string) error {
-	for _, k := range path {
-		err := os.MkdirAll(k, os.ModePerm)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func initFile(basePath string) {
-	initPomFile(basePath, basePath, parentVersion)
-	initMakefile(basePath)
-	initGitlabFile(basePath)
-	initGitIgnoreFile(basePath)
-	initMysqlShell(basePath + "/hack")
-}
-
-func initGitIgnoreFile(basePath string) {
-	err := creator.CreateIgnoreFile(basePath)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func initGitlabFile(basePath string) {
-	err := creator.CreateGitlabCi(basePath)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func initMakefile(basePath string) {
-	err := creator.CreateMakefile(basePath)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func initPomFile(basePath, moduleName, parentVersion string) {
-	err := creator.CreatePom(basePath, moduleName, parentVersion)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func initMysqlShell(basePath string) {
-	err := creator.CreateMysqlShell(basePath)
-	if err != nil {
-		panic(err)
-	}
+	builder.BuildProject("", moduleName, parentVersion)
 }
