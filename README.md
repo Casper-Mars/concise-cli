@@ -1,5 +1,9 @@
 # concise项目的脚手架工具
 
+<p align="center">
+  <a href="https://github.com/Casper-Mars/concise-cli/actions/workflows/go.yml"><img src="https://github.com/Casper-Mars/concise-cli/actions/workflows/go.yml/badge.svg" alt="Github Actions status"></a>
+</p>
+
 ---
 
 - [concise项目的脚手架工具](#concise项目的脚手架工具)
