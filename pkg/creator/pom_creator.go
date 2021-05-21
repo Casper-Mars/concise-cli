@@ -5,7 +5,70 @@ import (
 	"strings"
 )
 
-var pomFileTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n    <parent>\n        <groupId>com.zhisheng.framework.concise</groupId>\n        <artifactId>parent</artifactId>\n        <version>${parent_version}</version>\n    </parent>\n    <modelVersion>4.0.0</modelVersion>\n\n    <artifactId>${module_name}</artifactId>\n    <version>0.1.0-SNAPSHOT</version>\n\n    <properties>\n    </properties>\n\n    <dependencies>\n        <!--单元测试-->\n        <dependency>\n            <groupId>org.springframework.boot</groupId>\n            <artifactId>spring-boot-test-autoconfigure</artifactId>\n            <scope>test</scope>\n        </dependency>\n        <dependency>\n            <groupId>org.springframework.boot</groupId>\n            <artifactId>spring-boot-starter-test</artifactId>\n            <scope>test</scope>\n            <exclusions>\n                <exclusion>\n                    <groupId>org.junit.vintage</groupId>\n                    <artifactId>junit-vintage-engine</artifactId>\n                </exclusion>\n            </exclusions>\n        </dependency>\n        <dependency>\n            <groupId>org.jmockit</groupId>\n            <artifactId>jmockit</artifactId>\n            <scope>test</scope>\n        </dependency>\n        <dependency>\n            <groupId>org.testng</groupId>\n            <artifactId>testng</artifactId>\n            <scope>test</scope>\n        </dependency>\n        <!--单元测试end-->\n    </dependencies>\n\n    <repositories>\n        <repository>\n            <id>zhisheng-group</id>\n            <name>zhisheng Mirror</name>\n            <url>http://nexus.zhisheng.com:8081/repository/zhisheng/</url>\n            <releases>\n                <enabled>true</enabled>\n            </releases>\n            <snapshots>\n                <enabled>true</enabled>\n            </snapshots>\n        </repository>\n    </repositories>\n\n\n</project>"
+var pomFileTemplate = `
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.zhisheng.framework.concise</groupId>
+        <artifactId>parent</artifactId>
+        <version>${parent_version}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>${module_name}</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+        <!--单元测试-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--单元测试end-->
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>zhisheng-group</id>
+            <name>zhisheng Mirror</name>
+            <url>http://nexus.zhisheng.com:8081/repository/zhisheng/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>
+`
 
 func CreatePom(basePath, moduleName, parentVersion string) error {
 	pom := strings.ReplaceAll(pomFileTemplate, "${module_name}", moduleName)

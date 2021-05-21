@@ -2,7 +2,21 @@ package creator
 
 import "os"
 
-var ignoreFileTemplate = ".project\n.settings\ntarget\n.classpath\nbin\nlog/\n.idea/\nlogs/\n*.iml\n*.uml\nLOG_HOME_IS_UNDEFINED/\n*/.sts4-cache\n*/.springBeans\n"
+var ignoreFileTemplate = `
+.project
+.settings
+target
+.classpath
+bin
+log/
+.idea/
+logs/
+*.iml
+*.uml
+LOG_HOME_IS_UNDEFINED/
+*/.sts4-cache
+*/.springBeans
+`
 
 func CreateIgnoreFile(basePath string) error {
 	ignore, err := os.Create(basePath + "/.gitignore")
