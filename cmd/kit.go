@@ -17,30 +17,34 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
 )
+
+var kitName string
+var conciseParentVersion string
 
 // kitCmd represents the kit command
 var kitCmd = &cobra.Command{
 	Use:   "kit",
 	Short: "生成基础库项目",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("kit called")
-	},
+	Run:   createKit,
 }
 
 func init() {
 	rootCmd.AddCommand(kitCmd)
+	kitCmd.Flags().StringVarP(&conciseParentVersion, "parent", "p", "", "指定父项目的版本号")
+	kitCmd.Flags().StringVarP(&kitName, "name", "n", "", "指定项目名称")
+}
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// kitCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// kitCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func createKit(cmd *cobra.Command, args []string) {
+	/*校验参数，工程项目名称和父工程版本号不能为空*/
+	if conciseParentVersion == "" {
+		fmt.Println("父工程版本号不能为空")
+		return
+	}
+	if kitName == "" {
+		fmt.Println("项目工程名称不能为空")
+		return
+	}
 }
