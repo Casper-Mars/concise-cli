@@ -6,7 +6,7 @@ import (
 )
 
 type kitConfig struct {
-	KitName       string
+	Name          string
 	ParentVersion string
 	Dependence    []string
 }
@@ -19,7 +19,7 @@ func (receiver kitConfig) Check() error {
 	if receiver.ParentVersion == "" {
 		return errors.WithMessage(myerror.ErrConfigMissing, "父工程版本号不能为空")
 	}
-	if receiver.KitName == "" {
+	if receiver.Name == "" {
 		return errors.WithMessage(myerror.ErrConfigMissing, "项目工程名称不能为空")
 	}
 	return nil

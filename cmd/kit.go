@@ -40,7 +40,7 @@ var kitCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(kitCmd)
 	kitCmd.Flags().StringVarP(&kitProjectConfig.ParentVersion, "parent", "p", "", "指定父项目的版本号")
-	kitCmd.Flags().StringVarP(&kitProjectConfig.KitName, "name", "n", "", "指定项目名称")
+	kitCmd.Flags().StringVarP(&kitProjectConfig.Name, "name", "n", "", "指定项目名称")
 	kitCmd.Flags().StringArrayVarP(&kitProjectConfig.Dependence, "dependence", "d", []string{}, "指定项目需要的外部依赖")
 }
 
@@ -53,15 +53,15 @@ func createKit(cmd *cobra.Command, args []string) {
 	}
 	group, _ := errgroup.WithContext(context.Background())
 	/*生成目录*/
-	err = dir.Build([]byte(getDirTree(kitProjectConfig.KitName)), ".")
+	err = dir.Build([]byte(getDirTree(kitProjectConfig.Name)), ".")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	rootPath := "./" + kitProjectConfig.KitName
+	rootPath := "./" + kitProjectConfig.Name
 	/*初始化关键文件*/
 	group.Go(func() error {
 		/*创建pom文件*/
-		pom := file.NewPom("com.zhisheng.framework.concise", kitProjectConfig.KitName, "0.1.0")
+		pom := file.NewPom("com.zhisheng.framework.concise", kitProjectConfig.Name, "0.1.0")
 		pom.InitParent(fmt.Sprintf(`
     <parent>
         <groupId>com.zhisheng.framework.concise</groupId>
