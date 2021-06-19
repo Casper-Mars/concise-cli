@@ -2,14 +2,14 @@ version=0.4.0
 
 
 # 进行测试
-.PHONY: test
+.PHONY: test-kit
 test:
 	make clean
 	mkdir out
-	go build -o out/cli cmd/concise/concisectl.go
+	go build -o out/cli cmd/concise/main.go
 	cd out \
 	&& \
-	./cli -m test-cli -p 1.0.1
+	./cli kit -m test-cli -p 1.0.1
 
 # 清理测试产生的文件
 .PHONY: clean

@@ -1,12 +1,14 @@
-package pom
+package file
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
 const (
 	projectInfoPlaceHolder = "${project-info}"
+	parentInfoPlaceHolder  = "${parent-info}"
 )
 
 type pom struct {
@@ -14,7 +16,7 @@ type pom struct {
 	dependence string
 }
 
-func NewPom(groupId, artifactId, version, parentVersion string) *pom {
+func NewPom(groupId, artifactId, version string) *pom {
 	projectInfo := fmt.Sprintf(`
     <groupId>%s</groupId>
     <artifactId>%s</artifactId>
@@ -31,9 +33,26 @@ func (receiver *pom) AppendDependence() {
 
 }
 
+func (receiver *pom) InitParent(parent string) {
+	receiver.template = strings.Replace(receiver.template, parentInfoPlaceHolder, parent, 1)
+}
+
 //Build 构造pom文件内容
 func (receiver *pom) Build() string {
-	return receiver.template
+	result := strings.Replace(receiver.template, parentInfoPlaceHolder, "", 1)
+	return result
+}
+
+//BuildFile 构建pom文件
+func (receiver *pom) BuildFile(path string) error {
+	target, err := os.OpenFile(path+"/pom.xml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer target.Close()
+	pom := receiver.Build()
+	_, err = target.Write([]byte(pom))
+	return err
 }
 
 //getPomTemplate 获取pom文件的模板
@@ -43,12 +62,8 @@ func getPomTemplate() string {
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+	${parent-info}
 	${project-info}
-
-    <groupId>${group-id}</groupId>
-    <artifactId>${artifact-id}</artifactId>
-    <version>${version}</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

@@ -16,8 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/Casper-Mars/concise-cli/pkg/dir"
+	"github.com/Casper-Mars/concise-cli/pkg/file"
 	"github.com/spf13/cobra"
+	"golang.org/x/sync/errgroup"
+	"log"
+	"os"
 )
 
 var kitName string
@@ -47,4 +53,249 @@ func createKit(cmd *cobra.Command, args []string) {
 		fmt.Println("项目工程名称不能为空")
 		return
 	}
+
+	group, _ := errgroup.WithContext(context.Background())
+	/*生成目录*/
+	err := dir.Build([]byte(getDirTree(kitName)), ".")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	rootPath := "./" + kitName
+	/*初始化关键文件*/
+	group.Go(func() error {
+		/*创建pom文件*/
+		pom := file.NewPom("com.zhisheng.framework.concise", kitName, "0.1.0")
+		pom.InitParent(fmt.Sprintf(`
+    <parent>
+        <groupId>com.zhisheng.framework.concise</groupId>
+        <artifactId>parent</artifactId>
+        <version>%s</version>
+    </parent>
+`, parentVersion))
+		return pom.BuildFile(rootPath)
+	})
+	/*创建makefile*/
+	group.Go(func() error {
+		return buildKitMakefile(rootPath)
+	})
+	/*创建gitlab-ci.yml*/
+	group.Go(func() error {
+		return buildKitGitlabCi(rootPath)
+	})
+	/*创建.gitignore*/
+	group.Go(func() error {
+		return file.BuildGitIgnore(rootPath)
+	})
+	/*创建依赖脚本*/
+	group.Go(func() error {
+		hackFile := file.NewHackFile(rootPath, dependence)
+		return hackFile.BuildFile()
+	})
+	err = group.Wait()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+//getDirTree 获取目录树
+func getDirTree(root string) string {
+	return fmt.Sprintf(`
+name: %s
+child:
+- name: db
+  child:
+  - name: test
+    child:
+    - name: migration
+- name: hack
+- name: src
+  child:
+  - name: main
+    child:
+    - name: java
+    - name: resources
+  - name: test
+    child:
+    - name: java
+      child:
+      - name: unit
+      - name: integration
+    - name: resources
+`, root)
+}
+
+func buildKitGitlabCi(path string) error {
+	target, err := os.OpenFile(path+"/.gitlab-ci.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer target.Close()
+	_, err = target.WriteString(`
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+
+# test:进行测试的阶段
+# deploy:测试阶段正常通过后，进入部署阶段，把构件部署到仓库中
+# notify:部署完成后，进入通知阶段，把新部署的构件的信息推送给各个订阅者
+stages:
+  - test
+  - deploy
+  - notify
+
+test:
+  stage: test
+  tags:
+    - maven-host
+  script:
+    - make test-with-clean
+
+deploy:
+  stage: deploy
+  tags:
+    - maven-host
+  script:
+    make deploy
+
+notify:
+  stage: notify
+  tags:
+    - maven-host
+  script:
+    - VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+    - NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+    - curl --location --request POST 'http://192.168.123.210:9444/api/msg' --form "name=${NAME}" --form "version=${VERSION}"
+`)
+	return err
+}
+
+func buildKitMakefile(path string) error {
+	target, err := os.OpenFile(path+"/Makefile", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer target.Close()
+	_, err = target.WriteString(`db_username = root
+db_password = root
+db_url = localhost
+db_port = 3306
+db_name = demo
+db_container_name = test-mysql
+
+
+define run-mysql
+	DB_USERNAME=${db_username} \
+	DB_PASSWORD=${db_password} \
+	DB_PORT=${db_port} \
+	DB_CONTAINER_NAME=${db_container_name} \
+	DB_DBS=demo \
+	/bin/sh hack/mysql.sh
+endef
+
+define migrate-up-db
+	migrate -path db/test/migration \
+	-database 'mysql://$(db_username):$(db_password)@tcp($(db_url):$(db_port))/${db_name}' \
+	-verbose \
+	up $(1)
+endef
+
+define migrate-down-db
+	migrate -path db/test/migration \
+	-database 'mysql://$(db_username):$(db_password)@tcp($(db_url):$(db_port))/${db_name}' \
+	-verbose \
+	down $(1)
+endef
+
+define delete-mysql
+	docker stop ${db_container_name} && docker container rm ${db_container_name}
+endef
+
+define test-container
+	docker run -i --rm --privileged \
+	 --name test-env \
+	 -e MYSQL_SERVICE=on \
+	 -w /work \
+	 -v ${PWD}:/work \
+	 harbor.zhisheng.com:5000/public/it-env \
+	 /bin/sh -c $(1)
+endef
+
+
+# 安装到本地的命令
+.PHONY: install
+install:
+	mvn -Dmaven.test.skip=true install
+
+# 部署命令
+.PHONY: deploy
+deploy:
+	mvn -Dmaven.test.skip=true deploy
+
+# ----------------------------本地开发常用脚本------------------------------
+
+# 建立本地开发环境
+.PHONY: setup-local-test-env
+setup-local-test-env:
+	$(call run-mysql)
+	$(call migrate-up-db)
+
+# 清除本地开发环境
+.PHONY: delete-local-test-env
+delete-local-test-env:
+	$(call delete-mysql)
+
+# 初始化数据库
+.PHONY: migrate-up
+migrate-up:
+	$(call migrate-up-db,$(version))
+
+# 清理数据库
+.PHONY: migrate-down
+migrate-down:
+	$(call migrate-down-db,$(version))
+
+# 重置数据库
+.PHONY: resetDB
+resetDB:
+	make migrate-down
+	make migrate-up
+
+# ----------------------------本地开发常用脚本 end------------------------------
+
+# ----------------------------测试脚本-------------------------------
+
+# 使用本地环境进行测试
+.PHONY: test-local
+test-local:
+	mvn clean
+	echo "配置本地测试环境"
+	make setup-local-test-env
+	make test-ut
+	make test-it
+
+# 进行单元测试，默认本地已经有测试环境
+.PHONY: test-ut
+test-ut:
+	echo "进行单元测试"
+	mvn test -Dspring.profiles.active=test -Ptest_ut
+
+# 进行集成测试，默认本地已经有测试环境
+.PHONY: test-it
+test-it:
+	echo "进行集成测试"
+	mvn integration-test -Dspring.profiles.active=test -Ptest_it
+
+# 使用集成环境进行测试
+.PHONY: test
+test:
+	$(call test-container,"make test-local")
+
+# 使用集成环境进行测试并清理测试后的结果
+.PHONY: test-with-clean
+test-with-clean:
+	$(call test-container,"make test-local && mvn clean")
+
+# ----------------------------测试脚本 end-------------------------------
+`)
+	return err
 }
