@@ -91,11 +91,14 @@ func createProject(cmd *cobra.Command, args []string) {
 		hackFile := file.NewHackFile(rootPath, projectConfig.Dependence)
 		return hackFile.BuildFile()
 	})
+	/*创建k8s部署文件*/
+	group.Go(func() error {
+		return file.BuildK8sFile(rootPath)
+	})
 	err = group.Wait()
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 }
 
 func getProjectDirTree(root string) string {
