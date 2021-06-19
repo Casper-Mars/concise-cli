@@ -18,6 +18,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/Casper-Mars/concise-cli/pkg/config"
 	"github.com/Casper-Mars/concise-cli/pkg/dir"
 	"github.com/Casper-Mars/concise-cli/pkg/file"
 	"github.com/spf13/cobra"
@@ -26,8 +27,7 @@ import (
 	"os"
 )
 
-var kitName string
-var conciseParentVersion string
+var kitProjectConfig = config.NewKitConfig()
 
 // kitCmd represents the kit command
 var kitCmd = &cobra.Command{
@@ -39,39 +39,36 @@ var kitCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(kitCmd)
-	kitCmd.Flags().StringVarP(&conciseParentVersion, "parent", "p", "", "指定父项目的版本号")
-	kitCmd.Flags().StringVarP(&kitName, "name", "n", "", "指定项目名称")
+	kitCmd.Flags().StringVarP(&kitProjectConfig.ParentVersion, "parent", "p", "", "指定父项目的版本号")
+	kitCmd.Flags().StringVarP(&kitProjectConfig.KitName, "name", "n", "", "指定项目名称")
+	kitCmd.Flags().StringArrayVarP(&kitProjectConfig.Dependence, "dependence", "d", []string{}, "指定项目需要的外部依赖")
 }
 
 func createKit(cmd *cobra.Command, args []string) {
 	/*校验参数，工程项目名称和父工程版本号不能为空*/
-	if conciseParentVersion == "" {
-		fmt.Println("父工程版本号不能为空")
+	err := kitProjectConfig.Check()
+	if err != nil {
+		log.Println(err.Error())
 		return
 	}
-	if kitName == "" {
-		fmt.Println("项目工程名称不能为空")
-		return
-	}
-
 	group, _ := errgroup.WithContext(context.Background())
 	/*生成目录*/
-	err := dir.Build([]byte(getDirTree(kitName)), ".")
+	err = dir.Build([]byte(getDirTree(kitProjectConfig.KitName)), ".")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	rootPath := "./" + kitName
+	rootPath := "./" + kitProjectConfig.KitName
 	/*初始化关键文件*/
 	group.Go(func() error {
 		/*创建pom文件*/
-		pom := file.NewPom("com.zhisheng.framework.concise", kitName, "0.1.0")
+		pom := file.NewPom("com.zhisheng.framework.concise", kitProjectConfig.KitName, "0.1.0")
 		pom.InitParent(fmt.Sprintf(`
     <parent>
         <groupId>com.zhisheng.framework.concise</groupId>
         <artifactId>parent</artifactId>
         <version>%s</version>
     </parent>
-`, parentVersion))
+`, kitProjectConfig.ParentVersion))
 		return pom.BuildFile(rootPath)
 	})
 	/*创建makefile*/
