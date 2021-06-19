@@ -85,7 +85,7 @@ func createKit(cmd *cobra.Command, args []string) {
 	})
 	/*创建依赖脚本*/
 	group.Go(func() error {
-		hackFile := file.NewHackFile(rootPath, dependence)
+		hackFile := file.NewHackFile(rootPath, kitProjectConfig.Dependence)
 		return hackFile.BuildFile()
 	})
 	err = group.Wait()
