@@ -23,16 +23,12 @@ func (receiver hackFile) BuildFile() error {
 		switch value {
 		case "mysql":
 			err = receiver.buildMysqlHack()
-			break
 		case "redis":
 			err = receiver.buildRedisHack()
-			break
 		case "rabbitmq":
 			err = receiver.buildRabbitmqHack()
-			break
 		case "minio":
 			err = receiver.buildMinioHack()
-			break
 		}
 		if err != nil {
 			return err
