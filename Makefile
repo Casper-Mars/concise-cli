@@ -1,4 +1,4 @@
-version=1.0.3
+version=1.0.4
 
 # 清理测试产生的文件
 .PHONY: clean
