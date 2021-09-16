@@ -1,4 +1,4 @@
-version=0.4.1
+version=1.0.0
 
 
 # 进行测试
