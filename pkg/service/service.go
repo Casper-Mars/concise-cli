@@ -9,8 +9,8 @@ import (
 type mode int
 
 const (
-	MODE_ONLINE mode = iota
-	MODE_OFFLINE
+	ModeOnline mode = iota
+	ModeOffline
 )
 
 type Option func(o *option)
@@ -76,9 +76,9 @@ func CreateProject(mode mode, opts ...Option) error {
 		opt(o)
 	}
 	switch o.mode {
-	case MODE_ONLINE:
+	case ModeOnline:
 		return createOnlineProject(o)
-	case MODE_OFFLINE:
+	case ModeOffline:
 		panic("implement offline")
 	}
 	return nil
@@ -90,11 +90,10 @@ func createOnlineProject(opt *option) error {
 	if err != nil {
 		return err
 	}
-	return subs.NewSubsChain(opt.dist,
-		subs.WithPomWorker(opt.name, opt.version, opt.parentVersion),
-		subs.WithDpWorker(opt.name),
-		subs.WithIngressWorker(opt.name, opt.domain),
-		subs.WithSvcWorker(opt.name),
-		subs.WithMakefileWorker(opt.name),
+	return subs.NewSubsChain(opt.dist, subs.NewDefaultWorkerFactory(),
+		subs.WithName(opt.name),
+		subs.WithVersion(opt.version),
+		subs.WithDomain(opt.domain),
+		subs.WithParentVersion(opt.parentVersion),
 	).Do(context.Background())
 }

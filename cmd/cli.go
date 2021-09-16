@@ -62,9 +62,9 @@ func init() {
 	rootCmd.Flags().StringVarP(&repo, "repo", "r", "", "指定模板参考地址")
 	rootCmd.Flags().StringVarP(&branch, "branch", "b", "", "指定分支")
 	rootCmd.Flags().StringVarP(&dist, "target", "t", "demo-project", "指定生成的目标目录")
-	rootCmd.Flags().StringVarP(&name, "project-name", "n", "demo", "指定生成项目的名称，等于__project_name，默认:demo")
-	rootCmd.Flags().StringVarP(&version, "version", "v", "0.1.0", "指定生成项目的版本，等于__project_version，默认:0.1.0")
-	rootCmd.Flags().StringVarP(&parentVersion, "parent-version", "p", "1.0.17", "指定生成项目的父工程版本，等于__project_parent_version，默认:1.0.17")
+	rootCmd.Flags().StringVarP(&name, "name", "n", "demo", "指定生成项目的名称，等于__project_name")
+	rootCmd.Flags().StringVarP(&version, "version", "v", "0.1.0", "指定生成项目的版本，等于__project_version")
+	rootCmd.Flags().StringVarP(&parentVersion, "parent-version", "p", "1.0.17", "指定生成项目的父工程版本，等于__project_parent_version")
 	rootCmd.Flags().StringVarP(&domain, "domain", "d", "", "指定生成项目的域名，等于__project_domain")
 }
 
@@ -101,7 +101,7 @@ func createProject(cmd *cobra.Command, args []string) {
 		return
 	}
 	fmt.Printf("🚀 Creating project with template: %s. Please wait a moment.\n\n", color.GreenString(repo))
-	err := service.CreateProject(service.MODE_ONLINE,
+	err := service.CreateProject(service.ModeOnline,
 		service.WithUrl(repo),
 		service.WithBranch(branch),
 		service.WithDist(dist),
