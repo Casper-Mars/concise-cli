@@ -74,9 +74,25 @@ concise-cli -r http://xxx.xxxx.xx/xxx/xxx.git
 
 ### 参数占位符使用
 
-例如后端业务项目，可以使用占位符替换实现初始化maven文件(pom.xml)、Makefile、流水线文件等等。
+例如后端业务项目，可以使用占位符替换实现初始化maven文件(pom.xml)、Makefile、流水线文件等等。  
+在模板项目中添加 `concise.yaml` 配置文件，配置有使用了占位符的文件。例如如下：
 
+```yaml
+__project_name:
+  - pom.xml
+  - Makefile
+  - k8s/dp.yaml
+  - k8s/ingress.yaml
+  - k8s/svc.yaml
+__project_version:
+  - pom.xml
+__project_domain:
+  - k8s/ingress.yaml
+__project_parent_version:
+  - pom.xml
+```
 
+在使用脚手架创建项目的时候指定参数，则会对配置文件配置的文件进行占位符替换。
 
 
 
