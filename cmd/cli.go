@@ -37,8 +37,8 @@ var (
 	domain        = ""
 )
 
-func outputError(format string, arg ...string) {
-	fmt.Printf("🚫 %s:\n%s\n", color.RedString("Error"), fmt.Sprintf(format, arg))
+func outputError(error string) {
+	fmt.Printf("🚫 %s:\n%s\n", color.RedString("Error"), error)
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -97,7 +97,7 @@ func createProject(cmd *cobra.Command, args []string) {
 	}
 	// make sure the dist is not exist or is empty
 	if _, err := os.Stat(dist); !os.IsNotExist(err) {
-		outputError("%s already exist", color.RedString(dist))
+		outputError(fmt.Sprintf("%s already exist", color.RedString(dist)))
 		return
 	}
 	fmt.Printf("🚀 Creating project with template: %s. Please wait a moment.\n\n", color.GreenString(repo))
