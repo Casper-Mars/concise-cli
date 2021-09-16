@@ -26,18 +26,11 @@ func WithBranch(branch string) Option {
 	}
 }
 
-//WithDist set target dir
-func WithDist(dist string) Option {
-	return func(repo *Repo) {
-		repo.dist = dist
-	}
-}
-
 //NewRepo
-func NewRepo(url string, opts ...Option) *Repo {
+func NewRepo(url, dist string, opts ...Option) *Repo {
 	r := &Repo{
 		url:  strings.TrimSuffix(url, "/"),
-		dist: "demo-project",
+		dist: dist,
 	}
 	for _, opt := range opts {
 		opt(r)
@@ -58,5 +51,6 @@ func (receiver Repo) Clone(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("%w:%s\n", ErrCloneFail, errOutput.String())
 	}
+
 	return nil
 }
