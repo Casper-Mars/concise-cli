@@ -51,6 +51,7 @@ func (receiver Repo) Clone(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("%w:%s\n", ErrCloneFail, errOutput.String())
 	}
-
+	// clear .git dir
+	_ = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", receiver.dist)).Run()
 	return nil
 }
