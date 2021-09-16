@@ -59,3 +59,28 @@ concise-cli -r http://xxx.xxxx.xx/xxx/xxx.git
 ```
 
 > 命令执行成功后，会在执行的目录中看到多出一个demo目录，然后打开idea/eclipse打开(导入)即可。
+
+## 进阶使用
+
+### 参数说明
+
+* r: 模板地址。例如github clone的地址
+* b: 分支。
+* t: 生成的项目的目录名称。可以是 `demo` 或者是绝对路径 `~/project/demo`
+* n: 项目名称，用于 `__project_name` 占位符的替换。
+* v: 项目的版本，用于 `__project_version` 占位符的替换。
+* d: 域名，用于 `__project_domain` 占位符的替换。
+* p: 项目的父工程的版本，用于 `__project_parent_version` 占位符的替换。
+
+### 参数占位符使用
+
+例如后端业务项目，可以使用占位符替换实现初始化maven文件(pom.xml)、Makefile、流水线文件等等。
+
+
+
+
+
+
+
+
+
