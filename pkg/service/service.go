@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Casper-Mars/concise-cli/pkg/repo"
 	"github.com/Casper-Mars/concise-cli/pkg/subs"
 )
@@ -26,7 +27,7 @@ type option struct {
 	domain        string
 }
 
-func WithUrl(url string) Option {
+func WithURL(url string) Option {
 	return func(o *option) {
 		o.url = url
 	}

@@ -3,6 +3,7 @@ package subs
 import (
 	"context"
 	"fmt"
+
 	"github.com/Casper-Mars/concise-cli/pkg/config"
 	"golang.org/x/sync/errgroup"
 )
@@ -76,7 +77,7 @@ func (c Chain) init(o *options) {
 			for _, k := range files {
 				m := c.keyword[k]
 				if m == nil {
-					c.keyword[k] = make(map[string]string, 0)
+					c.keyword[k] = make(map[string]string)
 					m = c.keyword[k]
 				}
 				m[valueName] = value
@@ -106,7 +107,7 @@ func NewSubsChain(projectRootPath string, workerFactory WorkerFactory, opts ...O
 	}
 	c := &Chain{
 		projectRootPath: projectRootPath,
-		keyword:         make(map[string]map[string]string, 0),
+		keyword:         make(map[string]map[string]string),
 		workerFactory:   workerFactory,
 	}
 	c.init(option)

@@ -5,6 +5,12 @@ version=1.0.5
 clean:
 	rm -rf concise-*
 
+.PHONY: lint
+lint:
+	golangci-lint run --timeout=5m --config=".golangci.yml"
+
+
+
 # 构建可执行程序
 .PHONY: build
 build:

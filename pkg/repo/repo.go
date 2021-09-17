@@ -19,14 +19,14 @@ type Repo struct {
 	branch string
 }
 
-//WithBranch set branch
+// WithBranch set branch
 func WithBranch(branch string) Option {
 	return func(repo *Repo) {
 		repo.branch = branch
 	}
 }
 
-//NewRepo
+// NewRepo
 func NewRepo(url, dist string, opts ...Option) *Repo {
 	r := &Repo{
 		url:  strings.TrimSuffix(url, "/"),
@@ -49,7 +49,7 @@ func (receiver Repo) Clone(ctx context.Context) error {
 	command.Stderr = &errOutput
 	err := command.Run()
 	if err != nil {
-		return fmt.Errorf("%w:%s\n", ErrCloneFail, errOutput.String())
+		return fmt.Errorf("%w:%s", ErrCloneFail, errOutput.String())
 	}
 	// clear .git dir
 	_ = exec.Command("rm", "-rf", fmt.Sprintf("%s/.git", receiver.dist)).Run()

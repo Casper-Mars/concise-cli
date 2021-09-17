@@ -17,10 +17,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/Casper-Mars/concise-cli/pkg/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -90,6 +91,7 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 }
+
 func createProject(cmd *cobra.Command, args []string) {
 	if repo == "" {
 		outputError("Repo is missing. Please specify one")
@@ -102,7 +104,7 @@ func createProject(cmd *cobra.Command, args []string) {
 	}
 	fmt.Printf("🚀 Creating project with template: %s. Please wait a moment.\n\n", color.GreenString(repo))
 	err := service.CreateProject(service.ModeOnline,
-		service.WithUrl(repo),
+		service.WithURL(repo),
 		service.WithBranch(branch),
 		service.WithDist(dist),
 		service.WithName(name),

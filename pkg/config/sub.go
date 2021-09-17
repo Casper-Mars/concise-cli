@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type SubConfig struct {

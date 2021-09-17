@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
-var (
-	ErrFileNotExist = errors.New("file not exist")
-)
+var ErrFileNotExist = errors.New("file not exist")
 
 type Worker struct {
 	file        string
